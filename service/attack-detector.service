@@ -1,0 +1,32 @@
+[Unit]
+# Descripción que aparecerá al ejecutar `systemctl status attack-detector`
+Description=Detector de ataques del Laboratorio 08
+Documentation=file:/opt/attack-detector/README.md
+
+# Asegura que la red esté activa antes de arrancar el servicio
+Wants=network-online.target
+After=network-online.target apache2.service
+
+[Service]
+# Tipo simple significa que el proceso principal es la herramienta en sí
+Type=simple
+
+# El servicio requiere privilegios elevados para ejecutar reglas de iptables
+User=root
+Group=root
+
+# Comando exacto de arranque, pasándole su archivo de configuración
+ExecStart=/usr/bin/python3 /opt/attack-detector/attack_detector.py --config /etc/attack-detector/config.json
+
+# Si falla o crashea inesperadamente, se reiniciará automáticamente tras 3 segundos
+Restart=on-failure
+RestartSec=3
+
+# Manda todo lo que la herramienta imprime (stdout/stderr) a journalctl
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=attack-detector
+
+[Install]
+# El servicio se habilitará en el runlevel multusuario normal del servidor (arranque habitual)
+WantedBy=multi-user.target

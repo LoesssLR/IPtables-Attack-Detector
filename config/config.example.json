@@ -1,0 +1,61 @@
+{
+  "dry_run": false,
+  "poll_interval_seconds": 0.25,
+  "block_scope": "service",
+  "iptables_chain": "ATTACK_DETECTOR",
+  "state_file": "/var/lib/attack-detector/blocked.json",
+  "events_file": "/var/log/attack-detector/events.jsonl",
+  "allowlist": [
+    "127.0.0.0/8",
+    "::1/128"
+  ],
+  "logs": {
+    "apache": [
+      "/var/log/apache2/access.log"
+    ],
+    "vsftpd": [
+      "/var/log/vsftpd.log"
+    ],
+    "auth": [
+      "/var/log/auth.log"
+    ]
+  },
+  "detectors": {
+    "sqlmap_user_agent": {
+      "enabled": true,
+      "threshold": 1,
+      "window_seconds": 10
+    },
+    "sqli_payload": {
+      "enabled": true,
+      "threshold": 2,
+      "window_seconds": 30
+    },
+    "hydra_http_user_agent": {
+      "enabled": true,
+      "threshold": 3,
+      "window_seconds": 15
+    },
+    "web_bruteforce": {
+      "enabled": true,
+      "threshold": 8,
+      "window_seconds": 60,
+      "paths": [
+        "/sistema/index.php"
+      ],
+      "failure_statuses": [
+        200
+      ]
+    },
+    "ftp_bruteforce": {
+      "enabled": true,
+      "threshold": 6,
+      "window_seconds": 60
+    },
+    "ssh_bruteforce": {
+      "enabled": false,
+      "threshold": 6,
+      "window_seconds": 60
+    }
+  }
+}

@@ -1,0 +1,38 @@
+# Python bytecode y caches
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Entornos virtuales
+.venv/
+venv/
+env/
+ENV/
+
+# Archivos de estado o logs locales producidos en pruebas
+*.jsonl
+blocked.json
+*.tmp
+*.log
+
+# Archivos de configuración locales con credenciales/ajustes especificos
+config.json
+
+# IDEs y Editores
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Archivos del sistema operativo
+.DS_Store
+Thumbs.db
+
+# Archivos comprimidos de despliegue
+*.zip
+*.tar.gz
+*.tgz

@@ -1,4 +1,4 @@
-# Detector de ataques — Laboratorio 08
+# Daemon Autónomo de Detección de Amenazas y Mitigación con iptables
 
 Proyecto defensivo para un entorno controlado. La herramienta sigue los logs
 del servidor en tiempo real, detecta comportamientos definidos y crea reglas
@@ -36,6 +36,28 @@ La herramienta inserta un salto desde `INPUT` y registra sus eventos en:
 ```bash
 /var/log/attack-detector/events.jsonl
 ```
+
+## Por qué un daemon propio en vez de Fail2ban
+
+Fail2ban es la alternativa madura para este problema, pero el laboratorio
+implementa un daemon a medida por tres razones concretas:
+
+- **Control granular de iptables**: la herramienta administra su propia
+  cadena `ATTACK_DETECTOR` (salto desde `INPUT`, inserción en posición
+  controlada), aplica bloqueo por alcance de servicio
+  (`block_scope: "service"`), soporta `allowlist` y persiste el estado de las
+  reglas. La demostración puede restringir solo los puertos 80/443 o el 21
+  sin tocar el resto del firewall ni arriesgar la sesión SSH.
+- **Logging JSONL listo para SIEM**: cada detección queda en `events.jsonl`
+  como un evento estructurado (`ip`, `attack_type`, `service`, `ports`,
+  `count`, `threshold`, `evidence`, `blocked_at_utc`, `action`), directamente
+  ingerible por un SIEM sin parsers adicionales. Fail2ban escribe en su
+  formato de log tradicional y requiere adaptadores.
+- **Objetivo didáctico**: el proyecto es un laboratorio de SecOps; implementar
+  el bucle completo (seguir logs → detectar → decidir → insertar regla)
+  muestra lo que Fail2ban hace por debajo, con umbrales y ventanas
+  configurables por tipo de ataque (SQLMap, SQLi, Hydra, fuerza bruta
+  web/FTP/SSH) en un solo daemon, más `--dry-run` y pruebas unitarias.
 
 ## Instalación en Ubuntu 24.04
 
